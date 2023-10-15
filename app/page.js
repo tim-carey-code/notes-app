@@ -1,59 +1,76 @@
-import Image from 'next/image'
+'use client'
 import Link from 'next/link'
-import nikeShoe from '../images/nike-shoe.jpg'
+import Notes from 'components/Notes'
+import { useState, useEffect } from 'react'
+import { signIn, signOut, useSession, getProviders } from 'next-auth/react'
 
 export default function Home() {
-  return (
-    <main className="flex justify-center items-center flex-col m-10">
-      <div className="collapse collapse-arrow bg-base-200">
-        <input type="radio" name="my-accordion-2" />
-        <div className="collapse-title text-xl font-medium">
-          Click to open this one and close others
-        </div>
-        <div className="collapse-content">
-          <p>hello</p>
-        </div>
-      </div>
-      <div className="collapse collapse-arrow bg-base-200">
-        <input type="radio" name="my-accordion-2" />
-        <div className="collapse-title text-xl font-medium">
-          Click here to read the text
-        </div>
-        <div className="collapse-content">
-          <p>hello</p>
-          <p>
-            These prompts can be used with AI models to generate text, perform tasks,
-            or provide information on a wide range of topics and applications.
-          </p>
-        </div>
-      </div>
-      <div className="collapse collapse-arrow bg-base-200">
-        <input type="radio" name="my-accordion-2" />
-        <div className="collapse-title text-xl font-medium">
-          Click to open this one and close others
-        </div>
-        <div className="collapse-content">
-          <p>hello</p>
-        </div>
-      </div>
+  const { data: session } = useSession()
+  const [providers, setProviders] = useState()
+  const [notes, setNotes] = useState([])
 
-      <div className="card mt-10 w-96 bg-base-100 shadow-xl">
-        <figure>
-          <Image
-            src={nikeShoe}
-            alt="Shoes"
-            width={400}
-            height={400}
-          />
-        </figure>
-        <div className="card-body">
-          <h2 className="card-title">Shoes!</h2>
-          <p>If a dog chews shoes whose shoes does he choose?</p>
-          <div className="card-actions justify-end">
-            <Link href="/notes" className="btn btn-primary">Buy NOW</Link>
-          </div>
-        </div>
-      </div>
-    </main>
+  const setUpProviders = async () => {
+    const res = await getProviders()
+    setProviders(res)
+  }
+
+  const fetchNotes = async () => {
+    const res = await fetch('/api/note')
+    const data = await res.json()
+    const filteredUserNotes = data.filter((note) => session?.user.id === note.creator?._id)
+    setNotes(filteredUserNotes)
+  }
+
+  const handleDelete = () => {
+
+  }
+
+  const handleEdit = () => {
+
+  }
+
+  useEffect(() => {
+    setUpProviders()
+    if (session?.user.id) fetchNotes()
+  }, [session?.user.id])
+
+  return (
+    <section className='p-10'>
+      {session?.user ?
+        (
+          <>
+            <h1 className='text-3xl text-center'>{session?.user.email}'s Notes</h1>
+            <Link href="/create-note" className="btn btn-primary mb-4">
+              New Note
+            </Link>
+            <Notes
+              name={session?.user.email}
+              data={notes}
+              handleEdit={handleEdit}
+              handleDelete={handleDelete}
+            />
+          </>
+        ) : (
+          <>
+            {providers &&
+              Object.values(providers).map((provider) => (
+                <div>
+                  <a
+                    key={provider.name}
+                    onClick={() => signIn(provider.id)}
+                    className="link"
+                  >
+                    Sign In
+                  </a>
+                  <span className='ml-1'>to start creating notes!</span>
+                </div>
+
+              ))
+            }
+          </>
+        )
+      }
+
+    </section>
   )
 }
