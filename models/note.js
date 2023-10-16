@@ -7,7 +7,7 @@ const NoteSchema = new Schema({
   },
   text: {
     type: String,
-    required: [true, "Note is required!"]
+    required: [true, "Text is required!"]
   },
   title: {
     type: String,
