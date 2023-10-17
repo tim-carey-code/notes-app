@@ -1,17 +1,20 @@
-import { connectToDB } from "utils/database"
-import Note from 'models/note'
+import { PrismaClient } from "@prisma/client"
+const prisma = new PrismaClient()
 
 export const GET = async (req, { params }) => {
+  // console.log(typeof params.id)
   try {
-    await connectToDB()
-    params.id
-    const note = await Note.findById(params.id).populate('creator')
+    const note = await prisma.note.findUnique({
+      where: {
+        id: Number(params.id)
+      }
+    })
 
     return new Response(JSON.stringify(note), {
       status: 200
     })
   } catch (error) {
-    return new Response("Failed to fetch all prompts", {
+    return new Response("Failed to fetch note", {
       status: 500
     })
   }
@@ -19,24 +22,27 @@ export const GET = async (req, { params }) => {
 
 
 export const PATCH = async (req, { params }) => {
-  const { userId, text, title, category, date } = await req.json()
-
+  const { userId, text, title, category } = await req.json()
 
   try {
-    await connectToDB()
 
-    const existingNote = await Note.findById(params.id)
+    const existingNote = await prisma.note.update({
+      where: {
+        id: Number(params.id)
+      },
+      data: {
+        text: text,
+        title: title,
+        category: category,
+        updatedAt: new Date()
+      }
+    })
 
     if (!existingNote) return new Response("Note not found", { status: 404 })
 
-    existingNote.title = title
-    existingNote.text = text
-    existingNote.category = category
-    existingNote.date = date
-    await existingNote.save()
     return new Response(JSON.stringify(existingNote), { status: 200 })
   } catch (error) {
-    return new Response("Failed to update prompt", {
+    return new Response(`Failed to update note. ${error}`, {
       status: 500
     })
   }
@@ -46,10 +52,11 @@ export const PATCH = async (req, { params }) => {
 export const DELETE = async (req, { params }) => {
 
   try {
-    await connectToDB()
-
-    await Note.findByIdAndRemove(params.id)
-
+    await prisma.note.delete({
+      where: {
+        id: Number(params.id)
+      }
+    })
     return new Response("Note deleted successfully", { status: 200 })
   } catch (error) {
     return new Response("Failed to delete note", {

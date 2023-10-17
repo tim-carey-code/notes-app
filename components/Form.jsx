@@ -1,21 +1,29 @@
 import Link from 'next/link'
 import Tiptap from './TipTap'
 
-const Form = ({ type, note, setNote, submitting, handleSubmit }) => {
+const Form = ({ type, note, setNote, submitting, handleSubmit, handleDelete }) => {
 
   if (note.text === undefined) {
     return <div className="loading loading-spinner loading-lg"></div>;
   }
 
+  const formatDate = (date) => {
+    const timestamp = date
+    const newDate = new Date(timestamp)
+    return newDate.toLocaleString()
+  }
+
   return (
-    <section className="w-full p-10 max-w-full flex-start flex-col">
+    <section className="flex mx-24 mt-10 flex-col">
+      <p>Created At: {formatDate(note.createdAt)}</p>
+      <p>Updated At: {formatDate(note.updatedAt)}</p>
       <h1 className="text-left">
-        <span className="text-3xl">{type} Note</span>
+        <span className="text-3xl">{type === "Create" ? "Create Note" : `Edit note "${note.title}"`}</span>
       </h1>
       <p className="text-left max-w-md">
         {type} and share notes with anyone around the world!
       </p>
-      <form onSubmit={handleSubmit}>
+      <form className='' onSubmit={handleSubmit}>
         <div className="form-control w-full max-w-xs">
           <label className="label">
             <span className="label-text">Title</span>
@@ -52,15 +60,19 @@ const Form = ({ type, note, setNote, submitting, handleSubmit }) => {
             className="input input-bordered w-full max-w-xs"
           />
         </div>
-        <div className="flex-end mx-3 mb-5 gap-4">
-          <button className="btn btn-primary mx-6" type="submit" disabled={submitting}>
+        <div className="flex-end mb-5 gap-4">
+          <button className="btn mx-3 btn-primary" type="submit" disabled={submitting}>
             {submitting ? `${type}...` : type}
           </button>
           <Link href="/" className="btn btn-secondary">
             Cancel
           </Link>
+          {type === "Edit" ? (
+            <a onClick={handleDelete} className='btn btn-error mx-3'>Delete</a>
+          ) : (<></>)}
         </div>
       </form>
+
     </section>
   );
 };
