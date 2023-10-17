@@ -17,7 +17,7 @@ export default function Home() {
   const fetchNotes = async () => {
     const res = await fetch('/api/note')
     const data = await res.json()
-    const filteredUserNotes = data.filter((note) => session?.user.id === note.creator?._id)
+    const filteredUserNotes = data.filter((note) => Number(session?.user.id) === note.userId)
     setNotes(filteredUserNotes)
   }
 

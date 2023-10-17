@@ -1,12 +1,10 @@
-import { connectToDB } from "utils/database";
-import Note from 'models/note'
-
+import { PrismaClient } from "@prisma/client"
+const prisma = new PrismaClient()
 
 export const GET = async (req, res) => {
   try {
-    await connectToDB()
 
-    const notes = await Note.find({}).populate('creator')
+    const notes = await prisma.note.findMany()
     return new Response(JSON.stringify(notes), {
       status: 200
     })

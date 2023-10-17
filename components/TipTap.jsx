@@ -31,7 +31,7 @@ const Tiptap = ({ text, onTextChange }) => {
   });
 
   return (
-    <EditorContent editor={editor} />
+    <EditorContent className='w-[40vw] rounded-lg border-2 border-black' editor={editor} />
   );
 };
 

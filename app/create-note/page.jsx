@@ -42,17 +42,17 @@ export default function Home() {
 
   }
 
-  const user = session?.user
-  const notify = () => toast.error("Please sign in to create notes.", {
-    toastId: "error",
-    position: "top-center"
-  })
+  // const user = session?.user
+  // const notify = () => toast.error("Please sign in to create notes.", {
+  //   toastId: "error",
+  //   position: "top-center"
+  // })
 
-  if (!user) {
-    notify()
-    router.push('/')
-    return null
-  }
+  // if (!user) {
+  //   notify()
+  //   router.push('/')
+  //   return null
+  // }
 
   return (
     <section>

@@ -55,7 +55,7 @@ const MyNote = ({ params }) => {
 
     if (hasConfirmed) {
       try {
-        await fetch(`/api/note/${note._id.toString()}`, {
+        await fetch(`/api/note/${note.id.toString()}`, {
           method: "DELETE"
         })
         router.push('/')
@@ -68,16 +68,14 @@ const MyNote = ({ params }) => {
 
   return (
     <div>
-      <p>{note.title}</p>
-      {/* <textarea className="textarea textarea-ghost" value={note.text}></textarea> */}
       <Form
         type="Edit"
         note={note}
         setNote={setNote}
         submitting={submitting}
         handleSubmit={editNote}
+        handleDelete={() => handleDelete && handleDelete(note)}
       />
-      <button onClick={handleDelete} className="btn btn-error">Delete</button>
     </div>
   );
 };

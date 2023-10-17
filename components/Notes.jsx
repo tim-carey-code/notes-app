@@ -13,6 +13,7 @@ const Notes = ({ name, data, handleEdit, handleDelete }) => {
     }
   }, [data]);
 
+
   return (
     <section>
       {!loading ? (
@@ -21,10 +22,10 @@ const Notes = ({ name, data, handleEdit, handleDelete }) => {
         ) : (
           <div>
             {data.map((note) => {
-              const isUserNote = session?.user.id === note.creator._id;
+              const isUserNote = Number(session?.user.id) === note.userId;
               return isUserNote ? (
                 <NoteList
-                  key={note._id}
+                  key={note.id}
                   note={note}
                   handleEdit={handleEdit && handleEdit(note)}
                   handleDelete={handleDelete && handleDelete(note)}
