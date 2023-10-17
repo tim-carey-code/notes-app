@@ -28,5 +28,5 @@ model Note {
   updatedAt DateTime @updatedAt
   category  String?
   user      User     @relation(fields: [userId], references: [id])
-  userId    Int      @unique
+  userId    Int
 }

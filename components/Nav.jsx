@@ -28,7 +28,6 @@ const Nav = () => {
         </Link>
       </div>
       <div className="flex-none gap-2">
-
         {session?.user ? (
           <>
             <div className="form-control">
